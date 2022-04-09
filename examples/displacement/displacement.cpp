@@ -9,7 +9,7 @@
 #include <vulkanExampleBase.h>
 
 // Vertex layout for this example
-vks::model::VertexLayout vertexLayout{ {
+const vks::model::VertexLayout vertexLayout{ {
     vks::model::Component::VERTEX_COMPONENT_POSITION,
     vks::model::Component::VERTEX_COMPONENT_NORMAL,
     vks::model::Component::VERTEX_COMPONENT_UV,
@@ -267,10 +267,10 @@ public:
             if (ui.checkBox("Tessellation displacement", &displacement)) {
                 updateUniformBuffers();
             }
-            if (ui.inputFloat("Strength", &uboTessEval.tessStrength, 0.025f, 3)) {
+            if (ui.inputFloat("Strength", &uboTessEval.tessStrength, 0.025f)) {
                 updateUniformBuffers();
             }
-            if (ui.inputFloat("Level", &uboTessControl.tessLevel, 0.5f, 2)) {
+            if (ui.inputFloat("Level", &uboTessControl.tessLevel, 0.5f, "%.2f")) {
                 updateUniformBuffers();
             }
             if (deviceFeatures.fillModeNonSolid) {

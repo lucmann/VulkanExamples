@@ -7,9 +7,12 @@
 
 namespace vks { namespace file {
 
-void withBinaryFileContents(const std::string& filename, std::function<void(const char* filename, size_t size, const void* data)> handler);
+using SimpleHandler = std::function<void(size_t, const void*)>;
+using NamedHandler = std::function<void(const char*, size_t, const void*)>;
 
-void withBinaryFileContents(const std::string& filename, std::function<void(size_t size, const void* data)> handler);
+void withBinaryFileContents(const std::string& filename, const SimpleHandler& handler);
+
+void withBinaryFileContents(const std::string& filename, const NamedHandler& handler);
 
 std::string readTextFile(const std::string& fileName);
 

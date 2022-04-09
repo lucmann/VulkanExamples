@@ -51,7 +51,7 @@ public:
 #endif
         context.createInstance();
         context.createDevice();
-        LOG("GPU: %s\n", context.deviceProperties.deviceName);
+        LOG("GPU: %s\n", context.deviceProperties.deviceName.data());
 
         // Get a compute queue
         queue = context.device.getQueue(context.queueIndices.compute, 0);
@@ -117,7 +117,7 @@ public:
         vk::SpecializationMapEntry specializationMapEntry{ 0, 0, sizeof(uint32_t) };
         vk::SpecializationInfo specializationInfo{ 1, &specializationMapEntry, sizeof(SpecializationData), &specializationData };
         computePipelineCreateInfo.stage.pSpecializationInfo = &specializationInfo;
-        pipeline = device.createComputePipeline(context.pipelineCache, computePipelineCreateInfo);
+        pipeline = device.createComputePipeline(context.pipelineCache, computePipelineCreateInfo).value;
         device.destroyShaderModule(computePipelineCreateInfo.stage.module);
     }
 

@@ -60,7 +60,7 @@ public:
     vk::QueryPool queryPool;
 
     // Passed query samples
-    std::array<uint64_t, 2> passedSamples{ 1, 1 };
+    std::vector<uint64_t> passedSamples{ 1, 1 };
 
     VulkanExample() {
         passedSamples[0] = passedSamples[1] = 1;
@@ -118,7 +118,8 @@ public:
         // We use vkGetQueryResults to copy the results into a host visible buffer
         // you can use vk::QueryResultFlagBits::eWithAvailability
         // which also returns the state of the result (ready) in the result
-        device.getQueryPoolResults(queryPool, 0, 2, vk::ArrayProxy<uint64_t>{ passedSamples }, sizeof(uint64_t), queryResultFlags);
+        passedSamples = device.getQueryPoolResults<uint64_t>(queryPool, 0, 2, 2 * sizeof(uint64_t), sizeof(uint64_t), queryResultFlags).value;
+        //vk::ArrayProxy<uint64_t>{ passedSamples };
     }
 
     void updateCommandBufferPreDraw(const vk::CommandBuffer& cmdBuffer) override {

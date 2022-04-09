@@ -53,7 +53,8 @@ private:
     struct PushConstBlock {
         glm::vec2 scale;
         glm::vec2 translate;
-    } pushConstBlock;
+    };
+    PushConstBlock pushConstBlock;
 
     void prepareResources();
     void preparePipeline();
@@ -66,7 +67,7 @@ public:
 
     std::vector<vk::CommandBuffer> cmdBuffers;
 
-    UIOverlay(const vks::Context& context)
+    explicit UIOverlay(const vks::Context& context)
         : context(context) {}
     ~UIOverlay();
 
@@ -81,7 +82,7 @@ public:
     bool header(const char* caption) const;
     bool checkBox(const char* caption, bool* value) const;
     bool checkBox(const char* caption, int32_t* value) const;
-    bool inputFloat(const char* caption, float* value, float step, uint32_t precision) const;
+    bool inputFloat(const char* caption, float* value, float step, const char* precision = "%.3f") const;
     bool sliderFloat(const char* caption, float* value, float min, float max) const;
     bool sliderInt(const char* caption, int32_t* value, int32_t min, int32_t max) const;
     bool comboBox(const char* caption, int32_t* itemindex, const std::vector<std::string>& items) const;

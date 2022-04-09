@@ -353,10 +353,10 @@ public:
                 updateUniformBuffers();
                 buildCommandBuffers();
             }
-            if (ui.inputFloat("Exposure", &uboParams.exposure, 0.1f, 2)) {
+            if (ui.inputFloat("Exposure", &uboParams.exposure, 0.1f, "%.2f")) {
                 updateParams();
             }
-            if (ui.inputFloat("Gamma", &uboParams.gamma, 0.1f, 2)) {
+            if (ui.inputFloat("Gamma", &uboParams.gamma, 0.1f, "%.2f")) {
                 updateParams();
             }
             if (ui.checkBox("Skybox", &displaySkybox)) {

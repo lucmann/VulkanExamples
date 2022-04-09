@@ -2,7 +2,6 @@
 #include <vulkan/vulkan.hpp>
 #include <vks/version.hpp>
 #include <vector>
-#include <strstream>
 #include <iostream>
 
 namespace vkx {

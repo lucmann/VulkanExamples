@@ -54,6 +54,15 @@
 // Vulkan!
 #include <vulkan/vulkan.hpp>
 
+#include "keycodes.hpp"
+#if defined(__ANDROID__)
+#include "android.hpp"
+#else
+#include "gl.hpp"
+// Cross platform window management (except android)
+#include "glfw/glfw.hpp"
+#endif
+
 using glm::ivec2;
 using glm::mat3;
 using glm::mat4;
@@ -96,15 +105,6 @@ public:
     static const vec3 ZERO4;
 };
 
-#include "keycodes.hpp"
-#if defined(__ANDROID__)
-#include "android.hpp"
-
-#else
-#include "gl.hpp"
-// Cross platform window management (except android)
-#include "glfw/glfw.hpp"
-#endif
 
 // Boilerplate for running an example
 #if defined(__ANDROID__)

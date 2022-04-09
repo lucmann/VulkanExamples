@@ -19,8 +19,8 @@
 using namespace vkx;
 using namespace vkx::ui;
 
-void UIOverlay::create(const UIOverlayCreateInfo& createInfo) {
-    this->createInfo = createInfo;
+void UIOverlay::create(const UIOverlayCreateInfo& createInfo_) {
+    createInfo = createInfo_;
 #if defined(__ANDROID__)
     // Screen density
     if (vkx::android::screenDensity >= ACONFIGURATION_DENSITY_XXXHIGH) {
@@ -62,6 +62,7 @@ void UIOverlay::create(const UIOverlayCreateInfo& createInfo) {
 
 /** Free up all Vulkan resources acquired by the UI overlay */
 UIOverlay::~UIOverlay() {
+    destroy();
 }
 
 void UIOverlay::destroy() {
@@ -79,6 +80,7 @@ void UIOverlay::destroy() {
         context.device.freeCommandBuffers(commandPool, cmdBuffers);
         context.device.destroyCommandPool(commandPool);
         context.device.destroyFence(fence);
+        commandPool = nullptr;
     }
 }
 
@@ -217,7 +219,7 @@ void UIOverlay::preparePipeline() {
 
 /** Prepare a separate render pass for rendering the UI as an overlay */
 void UIOverlay::prepareRenderPass() {
-    vk::AttachmentDescription attachments[2] = {};
+    std::array<vk::AttachmentDescription, 2> attachments;
 
     // Color attachment
     attachments[0].format = createInfo.colorformat;
@@ -236,7 +238,7 @@ void UIOverlay::prepareRenderPass() {
 
     vk::AttachmentReference colorReference{ 0, vk::ImageLayout::eColorAttachmentOptimal };
     vk::AttachmentReference depthReference{ 1, vk::ImageLayout::eDepthStencilAttachmentOptimal };
-    vk::SubpassDependency subpassDependencies[2];
+    std::array<vk::SubpassDependency, 2> subpassDependencies;
 
     // Transition from final to initial (VK_SUBPASS_EXTERNAL refers to all commmands executed outside of the actual renderpass)
     subpassDependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
@@ -263,11 +265,11 @@ void UIOverlay::prepareRenderPass() {
 
     vk::RenderPassCreateInfo renderPassInfo;
     renderPassInfo.attachmentCount = 2;
-    renderPassInfo.pAttachments = attachments;
+    renderPassInfo.pAttachments = attachments.data();
     renderPassInfo.subpassCount = 1;
     renderPassInfo.pSubpasses = &subpassDescription;
     renderPassInfo.dependencyCount = 2;
-    renderPassInfo.pDependencies = subpassDependencies;
+    renderPassInfo.pDependencies = subpassDependencies.data();
 
     renderPass = context.device.createRenderPass(renderPassInfo);
 }
@@ -292,7 +294,7 @@ void UIOverlay::updateCommandBuffers() {
 
     if (cmdBuffers.size()) {
         context.trashAll<vk::CommandBuffer>(cmdBuffers,
-                                            [&](const std::vector<vk::CommandBuffer>& buffers) { context.device.freeCommandBuffers(commandPool, buffers); });
+                                            [this](const std::vector<vk::CommandBuffer>& buffers) { context.device.freeCommandBuffers(commandPool, buffers); });
         cmdBuffers.clear();
     }
 
@@ -404,8 +406,8 @@ void UIOverlay::update() {
     }
 
     // Upload data
-    ImDrawVert* vtxDst = (ImDrawVert*)vertexBuffer.mapped;
-    ImDrawIdx* idxDst = (ImDrawIdx*)indexBuffer.mapped;
+    auto vtxDst = (ImDrawVert*)vertexBuffer.mapped;
+    auto idxDst = (ImDrawIdx*)indexBuffer.mapped;
 
     for (int n = 0; n < imDrawData->CmdListsCount; n++) {
         const ImDrawList* cmd_list = imDrawData->CmdLists[n];
@@ -465,8 +467,8 @@ bool UIOverlay::checkBox(const char* caption, int32_t* value) const {
     return res;
 }
 
-bool UIOverlay::inputFloat(const char* caption, float* value, float step, uint32_t precision) const {
-    return ImGui::InputFloat(caption, value, step, step * 10.0f, precision);
+bool UIOverlay::inputFloat(const char* caption, float* value, float step, const char* format) const {
+    return ImGui::InputFloat(caption, value, step, step * 10.0f, format);
 }
 
 bool UIOverlay::sliderFloat(const char* caption, float* value, float min, float max) const {
@@ -486,7 +488,7 @@ bool UIOverlay::comboBox(const char* caption, int32_t* itemindex, const std::vec
     for (size_t i = 0; i < items.size(); i++) {
         charitems.push_back(items[i].c_str());
     }
-    uint32_t itemCount = static_cast<uint32_t>(charitems.size());
+    auto itemCount = static_cast<uint32_t>(charitems.size());
     return ImGui::Combo(caption, itemindex, &charitems[0], itemCount, itemCount);
 }
 

@@ -644,7 +644,7 @@ public:
                 updateUniformBuffers();
                 buildDeferredCommandBuffer();
             }
-            if (ui.inputFloat("Exposure", &uboParams.exposure, 0.025f, 3)) {
+            if (ui.inputFloat("Exposure", &uboParams.exposure, 0.025f)) {
                 updateParams();
             }
             if (ui.checkBox("Bloom", &bloom)) {

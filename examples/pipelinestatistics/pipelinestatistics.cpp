@@ -127,12 +127,12 @@ public:
         device.getQueryPoolResults<uint64_t>(queryPool, 0, 1, pipelineStats, sizeof(uint64_t), vk::QueryResultFlagBits::e64);
     }
 
-    void updateCommandBufferPreDraw(const vk::CommandBuffer& drawCmdBuffer) {
+    void updateCommandBufferPreDraw(const vk::CommandBuffer& drawCmdBuffer) override {
         // Reset timestamp query pool
         drawCmdBuffer.resetQueryPool(queryPool, 0, static_cast<uint32_t>(pipelineStats.size()));
     }
 
-    void updateDrawCommandBuffer(const vk::CommandBuffer& drawCmdBuffer) {
+    void updateDrawCommandBuffer(const vk::CommandBuffer& drawCmdBuffer) override {
         drawCmdBuffer.setViewport(0, viewport());
         drawCmdBuffer.setScissor(0, scissor());
 
@@ -158,7 +158,7 @@ public:
         drawCmdBuffer.endQuery(queryPool, 0);
     }
 
-    void draw() {
+    void draw() override {
         ExampleBase::prepareFrame();
 
         drawCurrentCommandBuffer();

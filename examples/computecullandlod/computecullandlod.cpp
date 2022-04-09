@@ -152,7 +152,7 @@ struct Compute : public vkx::Compute {
         specializationInfo.pData = &specializationData;
 
         computePipelineCreateInfo.stage.pSpecializationInfo = &specializationInfo;
-        pipeline = device.createComputePipeline(context.pipelineCache, computePipelineCreateInfo);
+        pipeline = device.createComputePipeline(context.pipelineCache, computePipelineCreateInfo).value;
         device.destroyShaderModule(computePipelineCreateInfo.stage.module);
     }
 
@@ -272,7 +272,7 @@ public:
         }
     }
 
-    void updateDrawCommandBuffer(const vk::CommandBuffer& drawCommandBuffer) {
+    void updateDrawCommandBuffer(const vk::CommandBuffer& drawCommandBuffer) override {
         drawCommandBuffer.setViewport(0, viewport());
         drawCommandBuffer.setScissor(0, scissor());
         drawCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipelineLayout, 0, descriptorSet, nullptr);
@@ -451,7 +451,7 @@ public:
         compute.uniformData.scene.copy(uboScene);
     }
 
-    void draw() {
+    void draw() override {
         ExampleBase::prepareFrame();
 
         // Submit compute shader for frustum culling
