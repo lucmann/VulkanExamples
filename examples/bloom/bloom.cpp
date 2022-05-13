@@ -432,7 +432,7 @@ public:
             if (ui.checkBox("Bloom", &bloom)) {
                 buildCommandBuffers();
             }
-            if (ui.inputFloat("Scale", &ubos.blurParams.blurScale, 0.1f, 2)) {
+            if (ui.inputFloat("Scale", &ubos.blurParams.blurScale, 0.1f, "%.2f")) {
                 updateUniformBuffersBlur();
             }
         }

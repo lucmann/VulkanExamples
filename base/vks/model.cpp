@@ -21,8 +21,8 @@ using namespace vks::model;
 const int Model::defaultFlags =
     aiProcess_FlipWindingOrder | aiProcess_Triangulate | aiProcess_PreTransformVertices | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals;
 
-void Model::loadFromFile(const Context& context, const std::string& filename, const VertexLayout& layout, const ModelCreateInfo& createInfo, const int flags) {
-    this->layout = layout;
+void Model::loadFromFile(const Context& context, const std::string& filename, const VertexLayout& layout_, const ModelCreateInfo& createInfo, const int flags) {
+    layout = layout_;
     scale = createInfo.scale;
     uvscale = createInfo.uvscale;
     center = createInfo.center;
@@ -32,15 +32,14 @@ void Model::loadFromFile(const Context& context, const std::string& filename, co
     Assimp::Importer importer;
     const aiScene* pScene;
 
-
     // Load file
-    vks::file::withBinaryFileContents(filename, [&](const char* filename, size_t size, const void* data) {
-        pScene = importer.ReadFileFromMemory(data, size, flags, filename);
+    vks::file::withBinaryFileContents(filename, [flags, &pScene, &importer](const char* filename_, size_t size, const void* data) {
+        pScene = importer.ReadFileFromMemory(data, size, flags, filename_);
     });
 
     if (!pScene) {
         std::string error = importer.GetErrorString();
-        throw std::runtime_error(
+        throw std::invalid_argument(
             error +
             "\n\nThe file may be part of the additional asset pack.\n\nRun \"download_assets.py\" in the repository root to download the latest version.");
     }
@@ -158,6 +157,9 @@ void Model::appendVertex(std::vector<uint8_t>& outputBuffer, const aiScene* pSce
                 vertexBuffer.push_back(0.0f);
                 vertexBuffer.push_back(0.0f);
                 break;
+            default:
+                throw new std::invalid_argument("Bad case");
+
         };
     }
     appendOutput(outputBuffer, vertexBuffer);

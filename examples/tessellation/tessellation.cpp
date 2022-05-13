@@ -232,7 +232,7 @@ public:
 
     virtual void OnUpdateUIOverlay() {
         if (ui.header("Settings")) {
-            if (ui.inputFloat("Tessellation level", &uboTC.tessLevel, 0.25f, 2)) {
+            if (ui.inputFloat("Tessellation level", &uboTC.tessLevel, 0.25f, "%.2f")) {
                 updateUniformBuffers();
             }
             if (deviceFeatures.fillModeNonSolid) {

@@ -655,7 +655,7 @@ public:
         pipelineCreateInfo.pDynamicState = &dynamicState;
 
         // Create rendering pipeline
-        pipeline = device.createGraphicsPipelines(context.pipelineCache, pipelineCreateInfo, nullptr)[0];
+        pipeline = device.createGraphicsPipelines(context.pipelineCache, pipelineCreateInfo, nullptr).value[0];
 
         for (const auto& shaderStage : shaderStages) {
             device.destroyShaderModule(shaderStage.module);

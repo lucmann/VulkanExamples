@@ -391,7 +391,7 @@ public:
         uniformData.skysphereVertex.copy(uboVS);
     }
 
-    void draw() {
+    void draw() override {
         ExampleBase::prepareFrame();
 
         drawCurrentCommandBuffer();
@@ -424,7 +424,7 @@ public:
             if (ui.checkBox("Tessellation", &tessellation)) {
                 updateUniformBuffers();
             }
-            if (ui.inputFloat("Factor", &uboTess.tessellationFactor, 0.05f, 2)) {
+            if (ui.inputFloat("Factor", &uboTess.tessellationFactor, 0.05f, "%.2f")) {
                 updateUniformBuffers();
             }
             if (deviceFeatures.fillModeNonSolid) {

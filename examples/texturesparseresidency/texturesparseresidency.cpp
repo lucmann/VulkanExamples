@@ -203,7 +203,7 @@ public:
         uniformBufferVS.destroy();
     }
 
-    virtual void getEnabledFeatures() {
+    virtual void getEnabledFeatures() override {
         if (deviceFeatures.sparseBinding && deviceFeatures.sparseResidencyImage2D) {
             enabledFeatures.sparseBinding = VK_TRUE;
             enabledFeatures.sparseResidencyImage2D = VK_TRUE;
@@ -524,7 +524,7 @@ public:
         texture.destroy();
     }
 
-    void updateDrawCommandBuffer(const vk::CommandBuffer& drawCmdBuffer) {
+    void updateDrawCommandBuffer(const vk::CommandBuffer& drawCmdBuffer) override {
         drawCmdBuffer.setViewport(0, viewport());
         drawCmdBuffer.setScissor(0, scissor());
         drawCmdBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipelineLayout, 0, 1, &descriptorSet, 0, NULL);
@@ -599,7 +599,7 @@ public:
         memcpy(uniformBufferVS.mapped, &uboVS, sizeof(uboVS));
     }
 
-    void prepare() {
+    void prepare() override {
         ExampleBase::prepare();
         // Check if the GPU supports sparse residency for 2D images
         if (!context.deviceFeatures.sparseResidencyImage2D) {

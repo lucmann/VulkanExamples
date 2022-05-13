@@ -168,7 +168,7 @@ public:
 
     void OnUpdateUIOverlay() override {
         if (ui.header("Settings")) {
-            if (ui.inputFloat("Outline width", &uboVS.outlineWidth, 0.05f, 2)) {
+            if (ui.inputFloat("Outline width", &uboVS.outlineWidth, 0.05f, "%.2f")) {
                 updateUniformBuffers();
             }
         }

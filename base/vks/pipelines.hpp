@@ -3,6 +3,7 @@
 #include "context.hpp"
 #include "model.hpp"
 #include "shaders.hpp"
+#include <exception>
 
 namespace vks { namespace pipelines {
 struct PipelineRasterizationStateCreateInfo : public vk::PipelineRasterizationStateCreateInfo {
@@ -72,7 +73,7 @@ struct PipelineVertexInputStateCreateInfo : public vk::PipelineVertexInputStateC
         auto attributeIndexOffset = (uint32_t)attributeDescriptions.size();
         for (uint32_t i = 0; i < componentsSize; ++i) {
             const auto& component = vertexLayout.components[i];
-            const auto format = vertexLayout.componentFormat(component);
+            const auto format = vks::model::VertexLayout::componentFormat(component);
             const auto offset = vertexLayout.offset(i);
             attributeDescriptions.emplace_back(attributeIndexOffset + i, binding, format, offset);
         }
@@ -188,7 +189,7 @@ public:
 
     vk::Pipeline create(const vk::PipelineCache& cache) {
         update();
-        return device.createGraphicsPipeline(cache, pipelineCreateInfo);
+        return device.createGraphicsPipeline(cache, pipelineCreateInfo).value;
     }
 
     vk::Pipeline create() { return create(pipelineCache); }

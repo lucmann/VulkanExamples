@@ -242,9 +242,9 @@ void ExampleBase::renderLoop() {
 }
 
 std::string ExampleBase::getWindowTitle() {
-    std::string device(context.deviceProperties.deviceName);
+    std::string deviceName = context.deviceProperties.deviceName;
     std::string windowTitle;
-    windowTitle = title + " - " + device + " - " + std::to_string(frameCounter) + " fps";
+    windowTitle = title + " - " + deviceName + " - " + std::to_string(frameCounter) + " fps";
     return windowTitle;
 }
 
@@ -665,7 +665,7 @@ void ExampleBase::updateOverlay() {
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
     ImGui::SetNextWindowPos(ImVec2(10, 10));
-    ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiSetCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiCond_FirstUseEver);
     ImGui::Begin("Vulkan Example", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
     ImGui::TextUnformatted(title.c_str());
     ImGui::TextUnformatted(context.deviceProperties.deviceName);
