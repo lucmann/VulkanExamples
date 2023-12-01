@@ -218,3 +218,4 @@ gradlew
 gradlew.bat
 local.properties
 android/src/main/jniLibs
+!.github
