@@ -1,4 +1,4 @@
-macro(ADD_EXAMPLE_BINARY file) 
+macro(ADD_EXAMPLE_BINARY file)
     if (ANDROID)
         add_library(${TARGET_NAME} SHARED ${EXAMPLE})
         add_dependencies(${TARGET_NAME} app-glue)

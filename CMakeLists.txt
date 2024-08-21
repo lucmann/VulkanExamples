@@ -3,13 +3,13 @@ cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 include("cmake/defaults.cmake")
 set(NAME VulkanCppExamples)
 
-include(${CMAKE_SOURCE_DIR}/cmake/ezvcpkg/ezvcpkg.cmake)
+# include(${CMAKE_SOURCE_DIR}/cmake/ezvcpkg/ezvcpkg.cmake)
 
-ezvcpkg_fetch(
-    COMMIT af2287382b1991dbdcb7e5112d236f3323b9dd7a
-    PACKAGES assimp basisu imgui glad glfw3 gli glm vulkan 
-    UPDATE_TOOLCHAIN
-)
+# ezvcpkg_fetch(
+#     COMMIT af2287382b1991dbdcb7e5112d236f3323b9dd7a
+#     PACKAGES assimp basisu imgui glad glfw3 gli glm vulkan
+#     UPDATE_TOOLCHAIN
+# )
 
 project(${NAME})
 
@@ -19,10 +19,15 @@ endif()
 
 include("cmake/compiler.cmake")
 
+find_package(PkgConfig)
+pkg_check_modules(ASSIMP REQUIRED assimp)
 find_package(Threads REQUIRED)
+find_package(Vulkan REQUIRED)
 
-# This define is specific to Vulkan has a depth range of [0, 1], unlike OpenGL which has a [-1, 1] 
+# This define is specific to Vulkan has a depth range of [0, 1], unlike OpenGL which has a [-1, 1]
 add_definitions(-DGLM_FORCE_DEPTH_ZERO_TO_ONE)
+
+add_subdirectory(external)
 
 if (NOT ANDROID)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")

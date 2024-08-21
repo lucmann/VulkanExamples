@@ -26,7 +26,7 @@ add_library(${TARGET_NAME} STATIC ${COMMON_SOURCE})
 set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "common")
 add_dependencies(${TARGET_NAME} shaders)
 
-target_basisu()
+# target_basisu()
 target_glfw3()
 target_glm()
 target_gli()
