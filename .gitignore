@@ -210,6 +210,7 @@ vulkanCapsViewer/vulkanreport.json
 bin_debug
 /external/
 !/external/glad/
+!/external/CMakeLists.txt
 
 # Android Studio
 .idea
