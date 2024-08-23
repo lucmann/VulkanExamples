@@ -31,7 +31,7 @@ target_glfw3()
 target_glm()
 target_gli()
 target_vulkan()
-target_assimp()
+# target_assimp()
 target_imgui()
 target_glad()
 
