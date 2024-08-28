@@ -107,7 +107,7 @@ protected:
     uint32_t lastFPS{ 0 };
 
     // Color buffer format
-    vk::Format colorformat{ vk::Format::eB8G8R8A8Unorm };
+    vk::Format colorformat{ vk::Format::eB8G8R8A8Srgb };
 
     // Depth buffer format...  selected during Vulkan initialization
     vk::Format depthFormat{ vk::Format::eUndefined };

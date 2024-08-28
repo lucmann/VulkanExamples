@@ -15,7 +15,7 @@ public:
     vk::CommandBuffer cmdBuffer;
     vk::Semaphore renderComplete;
     glm::uvec2 size;
-    std::vector<vk::Format> colorFormats{ vk::Format::eB8G8R8A8Unorm };
+    std::vector<vk::Format> colorFormats{ vk::Format::eB8G8R8A8Srgb };
     // This value is chosen as an invalid default that signals that the code should pick a specific depth buffer
     // Alternative, you can set this to undefined to explicitly declare you want no depth buffer.
     vk::Format depthFormat = vk::Format::eR8Uscaled;
