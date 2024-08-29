@@ -9,7 +9,7 @@
 #include "vulkanExampleBase.h"
 
 // todo: check if hardware supports sample number (or select max. supported)
-#define SAMPLE_COUNT vk::SampleCountFlagBits::e8;
+#define SAMPLE_COUNT vk::SampleCountFlagBits::e4;
 
 class VulkanExample : public vkx::ExampleBase {
 public:
