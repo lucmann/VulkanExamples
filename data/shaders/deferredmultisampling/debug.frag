@@ -29,18 +29,30 @@ vec4 resolve(sampler2DMS tex, ivec2 uv)
 void main() 
 {
 	ivec2 attDim = textureSize(samplerPosition);
+	// attDim.x = 960 and attDim.y = 540
 	// convert normalized texture coordinate to texel coordinate
+	// at the same time, double the dimension
 	ivec2 UV = ivec2(inUV.st * attDim * 2.0);
 
 	highp int index = 0;
-	if (inUV.s > 0.5 && inUV.s < 0.75)
+	if (inUV.s > 0.5 && inUV.s < 0.6)
+	{
+		index = 0;
+		UV.s -= 960;
+	}
+	if (inUV.s > 0.6 && inUV.s < 0.75)
 	{
 		index = 1;
 		UV.s -= 960;
 	}
-	if (inUV.s > 0.75)
+	if (inUV.s > 0.75 && inUV.s < 0.9)
 	{
 		index = 2;
+		UV.s -= 960;
+	}
+	if (inUV.s > 0.9)
+	{
+		index = 0;
 		UV.s -= 960;
 	}
 	if (inUV.t > 0.5)
