@@ -13,7 +13,7 @@
 
 class VulkanExample : public vkx::ExampleBase {
 public:
-    bool debugDisplay = false;
+    bool debugDisplay = true;
     bool useMSAA = true;
     bool useSampleShading = true;
 
@@ -213,6 +213,7 @@ public:
     // blitted to our render target
     void prepareOffscreen() {
         offscreen.size = size;
+        std::cout << size.width << ", " << size.height << '\n';
 
         // Create a semaphore used to synchronize offscreen rendering and usage
         offscreen.semaphore = device.createSemaphore({});
