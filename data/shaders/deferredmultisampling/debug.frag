@@ -35,26 +35,19 @@ void main()
 	ivec2 UV = ivec2(inUV.st * attDim * 2.0);
 
 	highp int index = 0;
-	if (inUV.s > 0.5 && inUV.s < 0.6)
+	// upper right
+	if (inUV.s > 0.5 && inUV.s < 0.75)
 	{
 		index = 0;
 		UV.s -= 960;
 	}
-	if (inUV.s > 0.6 && inUV.s < 0.75)
-	{
-		index = 1;
-		UV.s -= 960;
-	}
-	if (inUV.s > 0.75 && inUV.s < 0.9)
+	if (inUV.s > 0.75)
 	{
 		index = 2;
 		UV.s -= 960;
 	}
-	if (inUV.s > 0.9)
-	{
-		index = 0;
-		UV.s -= 960;
-	}
+
+	// lower left
 	if (inUV.t > 0.5)
 	{
 		index = 2;
