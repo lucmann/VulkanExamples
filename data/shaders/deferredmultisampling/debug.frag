@@ -26,6 +26,14 @@ vec4 resolve(sampler2DMS tex, ivec2 uv)
 	return result / float(NUM_SAMPLES);
 }
 
+vec4 nearest_filter(sampler2DMS tex, ivec2 uv)
+{
+	// texel coord range [0, 480] in x-axis, so sampling every other texel horizontally
+	// is enough to filter the entire of 960x540 image
+	if (uv.x < 480)
+		return texelFetch(tex, ivec2(uv.x * 2, uv.y), 0);
+}
+
 void main() 
 {
 	ivec2 attDim = textureSize(samplerPosition);
@@ -38,13 +46,13 @@ void main()
 	// upper right
 	if (inUV.s > 0.5 && inUV.s < 0.75)
 	{
-		index = 0;
+		index = 3;
 		UV.s -= 960;
 	}
 	if (inUV.s > 0.75)
 	{
-		index = 2;
-		UV.s -= 960;
+		index = 3;
+		UV.s -= 1440;
 	}
 
 	// lower left
@@ -54,10 +62,11 @@ void main()
 		UV.t -= 540;
 	}
 
-	vec3 components[3];
+	vec3 components[4];
 	components[0] = resolve(samplerPosition, UV).rgb;  
 	components[1] = resolve(samplerNormal, UV).rgb;  
 	components[2] = resolve(samplerAlbedo, UV).rgb;  
+	components[3] = nearest_filter(samplerAlbedo, UV).rgb;
 	// Uncomment to display specular component
 	//components[2] = vec3(texture(samplerAlbedo, inUV.st).a);  
 	
