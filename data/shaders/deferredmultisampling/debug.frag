@@ -31,7 +31,7 @@ vec4 nearest_filter(sampler2DMS tex, ivec2 uv)
 	// texel coord range [0, 480] in x-axis, so sampling every other texel horizontally
 	// is enough to filter the entire of 960x540 image
 	if (uv.x < 480)
-		return texelFetch(tex, ivec2(uv.x * 2, uv.y), 0);
+		return texelFetch(tex, uv * ivec2(2, 1), 0);
 }
 
 void main() 
