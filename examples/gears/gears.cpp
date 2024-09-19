@@ -28,7 +28,7 @@ public:
     vk::DescriptorSetLayout descriptorSetLayout;
 
     VulkanExample() {
-        timerSpeed *= 0.25f;
+        timerSpeed *= 2.5f;
         camera.translate(glm::vec3(0.0f, 2.0f, -12.0f * zoomSpeed));
         title = "Vulkan Example - Gears";
     }
