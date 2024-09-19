@@ -730,7 +730,7 @@ void ExampleBase::mouseMoved(const glm::vec2& newPos) {
 }
 
 void ExampleBase::mouseScrolled(float delta) {
-    camera.translate(glm::vec3(0.0f, 0.0f, (float)delta * 0.005f * zoomSpeed));
+    camera.translate(glm::vec3(0.0f, 0.0f, (float)delta * 0.1f * zoomSpeed));
     viewUpdated = true;
 }
 
