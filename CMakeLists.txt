@@ -20,7 +20,6 @@ endif()
 include("cmake/compiler.cmake")
 
 find_package(PkgConfig)
-pkg_check_modules(ASSIMP REQUIRED assimp)
 find_package(Threads REQUIRED)
 find_package(Vulkan REQUIRED)
 

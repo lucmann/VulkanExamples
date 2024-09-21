@@ -7,7 +7,7 @@
 #
 
 macro(TARGET_ASSIMP)
-    find_package(assimp REQUIRED)
+    pkg_check_modules(ASSIMP REQUIRED assimp)
     message(STATUS "found: ${ASSIMP_FOUND}")
     message(STATUS "libraries: ${ASSIMP_LIBRARIES}")
     message(STATUS "library_dirs: ${ASSIMP_LIBRARY_DIRS}")
@@ -15,6 +15,6 @@ macro(TARGET_ASSIMP)
     message(STATUS "ldflags: ${ASSIMP_LDFLAGS}")
     message(STATUS "cflags: ${ASSIMP_CFLAGS}")
     # Adapt to ASSIMP 5.0.0 FindAssimp.cmake without assimp:: namespace
-    target_include_directories(${TARGET_NAME} PUBLIC assimp)
-    target_link_libraries(${TARGET_NAME} PRIVATE assimp)
+    target_include_directories(${TARGET_NAME} PUBLIC ${ASSIMP_INCLUDE_DIRS})
+    target_link_libraries(${TARGET_NAME} PRIVATE ${ASSIMP_LIBRARIES})
 endmacro()

@@ -6,7 +6,7 @@
 # 
 macro(TARGET_GLFW3)
     if (NOT ANDROID)
-        find_package(glfw3 CONFIG REQUIRED)
-        target_link_libraries(${TARGET_NAME} PUBLIC glfw)
+        pkg_check_modules(GLFW REQUIRED glfw3)
+        target_link_libraries(${TARGET_NAME} PUBLIC ${GLFW_LIBRARIES})
     endif()
 endmacro()
