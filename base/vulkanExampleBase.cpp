@@ -695,10 +695,12 @@ void ExampleBase::updateOverlay() {
 }
 
 void ExampleBase::mouseMoved(const glm::vec2& newPos) {
-    auto imgui = ImGui::GetIO();
-    if (imgui.WantCaptureMouse) {
-        mousePos = newPos;
-        return;
+    if (settings.overlay) {
+        auto imgui = ImGui::GetIO();
+        if (imgui.WantCaptureMouse) {
+            mousePos = newPos;
+            return;
+        }
     }
 
     glm::vec2 deltaPos = mousePos - newPos;
