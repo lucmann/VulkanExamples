@@ -182,6 +182,11 @@ protected:
     // Command buffer pool
     vk::CommandPool cmdPool;
 
+    // Pipeline query pool
+    vk::QueryPool queryPool;
+    std::vector<uint64_t> pipelineStats;
+    std::vector<std::string> pipelineStatNames;
+
     bool prepared = false;
     uint32_t version = VK_MAKE_VERSION(1, 1, 0);
     vk::Extent2D size{ 1280, 720 };
@@ -248,6 +253,10 @@ protected:
     // Create framebuffers for all requested swap chain images
     // Can be overriden in derived class to setup a custom framebuffer (e.g. for MSAA)
     virtual void setupFrameBuffer();
+    // Setup a query pool for storing pipeline statistics
+    void setupQueryPool();
+    // Retrieves the results of the pipeline statistics query submitted to the command buffer
+    void getQueryResults();
 
     // Setup a default render pass
     // Can be overriden in derived class to setup a custom render pass (e.g. for MSAA)

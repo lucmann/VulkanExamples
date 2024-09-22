@@ -283,6 +283,7 @@ void ExampleBase::prepare() {
     setupRenderPass();
     setupRenderPassBeginInfo();
     setupFrameBuffer();
+    setupQueryPool();
     setupUi();
     loadAssets();
 }
@@ -334,7 +335,9 @@ void ExampleBase::buildCommandBuffers() {
         // Let child classes execute operations outside the renderpass, like buffer barriers or query pool operations
         renderPassBeginInfo.framebuffer = framebuffers[i];
         cmdBuffer.beginRenderPass(renderPassBeginInfo, vk::SubpassContents::eInline);
+        cmdBuffer.beginQuery(queryPool, 0, vk::QueryControlFlagBits::ePrecise);
         updateDrawCommandBuffer(cmdBuffer);
+        cmdBuffer.endQuery(queryPool, 0);
         cmdBuffer.endRenderPass();
         updateCommandBufferPostDraw(cmdBuffer);
         cmdBuffer.end();
@@ -426,6 +429,33 @@ void ExampleBase::setupFrameBuffer() {
 
     // Create frame buffers for every swap chain image
     framebuffers = swapChain.createFramebuffers(framebufferCreateInfo);
+}
+
+void ExampleBase::setupQueryPool() {
+    pipelineStatNames = {
+        "Input assembly vertex count        ", "Input assembly primitives count    ", "Vertex shader invocations          ",
+        "Clipping stage primitives processed", "Clipping stage primtives output    ", "Fragment shader invocations        ",
+    };
+
+    pipelineStats.resize(pipelineStatNames.size());
+
+    vk::QueryPoolCreateInfo queryPoolInfo = {};
+    // This query pool will store pipeline statistics
+    queryPoolInfo.queryType = vk::QueryType::ePipelineStatistics;
+
+    // Pipeline counters to be returned for this pool
+    queryPoolInfo.pipelineStatistics =
+        vk::QueryPipelineStatisticFlagBits::eInputAssemblyVertices | vk::QueryPipelineStatisticFlagBits::eInputAssemblyPrimitives |
+        vk::QueryPipelineStatisticFlagBits::eVertexShaderInvocations | vk::QueryPipelineStatisticFlagBits::eClippingInvocations |
+        vk::QueryPipelineStatisticFlagBits::eClippingPrimitives | vk::QueryPipelineStatisticFlagBits::eFragmentShaderInvocations;
+
+    queryPoolInfo.queryCount = 6;
+    queryPool = device.createQueryPool(queryPoolInfo);
+}
+
+void ExampleBase::getQueryResults() {
+    uint32_t count = static_cast<uint32_t>(pipelineStats.size());
+    device.getQueryPoolResults(queryPool, 0, 1, count * sizeof(uint64_t), pipelineStats.data(), sizeof(uint64_t), vk::QueryResultFlagBits::e64);
 }
 
 void ExampleBase::setupRenderPass() {
@@ -542,6 +572,8 @@ void ExampleBase::draw() {
     prepareFrame();
     // Execute the compiled command buffer for the current swap chain image
     drawCurrentCommandBuffer();
+    // Read query results for displaying in next frame
+    getQueryResults();
     // Push the rendered frame to the surface
     submitFrame();
 }
@@ -675,6 +707,14 @@ void ExampleBase::updateOverlay() {
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 5.0f * ui.scale));
 #endif
     ImGui::PushItemWidth(110.0f * ui.scale);
+
+    // Pipeline statistics panel is always there
+    if (ui.header("Pipeline statistics")) {
+        for (auto i = 0; i < pipelineStats.size(); ++i) {
+            std::string caption = pipelineStatNames[i] + ": %d";
+            ui.text(caption.c_str(), pipelineStats[i]);
+        }
+    }
     OnUpdateUIOverlay();
     ImGui::PopItemWidth();
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)

@@ -88,11 +88,6 @@ public:
     vk::DescriptorSet descriptorSet;
     vk::DescriptorSetLayout descriptorSetLayout;
 
-    vk::QueryPool queryPool;
-
-    std::vector<uint64_t> pipelineStats;
-    std::vector<std::string> pipelineStatNames;
-
     // Framebuffer for offscreen rendering
     using FrameBufferAttachment = vks::Image;
 
@@ -385,15 +380,8 @@ public:
         drawCmdBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipelineLayouts.deferred, 0, descriptorSet, nullptr);
 
         if (debugDisplay) {
-            // Start capture of pipeline statistics
-            drawCmdBuffer.beginQuery(queryPool, 0, vk::QueryControlFlagBits::ePrecise);
-
             drawCmdBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, pipelines.debug);
             drawCmdBuffer.draw(3, 1, 0, 0);
-
-            // End capture of pipeline statistics
-            drawCmdBuffer.endQuery(queryPool, 0);
-
             // Move viewport to display final composition in lower right corner
             viewport.x = viewport.width * 0.5f;
             viewport.y = viewport.height * 0.5f;
@@ -439,35 +427,6 @@ public:
         textures.model.normalMap.loadFromFile(context, getAssetPath() + "models/armor/normal" + texFormatSuffix + ".ktx", texFormat);
         textures.floor.colorMap.loadFromFile(context, getAssetPath() + "textures/stonefloor02_color" + texFormatSuffix + ".ktx", texFormat);
         textures.floor.normalMap.loadFromFile(context, getAssetPath() + "textures/stonefloor02_normal" + texFormatSuffix + ".ktx", texFormat);
-    }
-
-    // Setup a query pool for storing pipeline statistics
-    void setupQueryPool() {
-        pipelineStatNames = {
-            "Input assembly vertex count        ", "Input assembly primitives count    ", "Vertex shader invocations          ",
-            "Clipping stage primitives processed", "Clipping stage primtives output    ", "Fragment shader invocations        ",
-        };
-
-        pipelineStats.resize(pipelineStatNames.size());
-
-        vk::QueryPoolCreateInfo queryPoolInfo = {};
-        // This query pool will store pipeline statistics
-        queryPoolInfo.queryType = vk::QueryType::ePipelineStatistics;
-
-        // Pipeline counters to be returned for this pool
-        queryPoolInfo.pipelineStatistics =
-            vk::QueryPipelineStatisticFlagBits::eInputAssemblyVertices | vk::QueryPipelineStatisticFlagBits::eInputAssemblyPrimitives |
-            vk::QueryPipelineStatisticFlagBits::eVertexShaderInvocations | vk::QueryPipelineStatisticFlagBits::eClippingInvocations |
-            vk::QueryPipelineStatisticFlagBits::eClippingPrimitives | vk::QueryPipelineStatisticFlagBits::eFragmentShaderInvocations;
-
-        queryPoolInfo.queryCount = 6;
-        queryPool = device.createQueryPool(queryPoolInfo);
-    }
-
-    // Retrieves the results of the pipeline statistics query submitted to the command buffer
-    void getQueryResults() {
-        uint32_t count = static_cast<uint32_t>(pipelineStats.size());
-        device.getQueryPoolResults(queryPool, 0, 1, count * sizeof(uint64_t), pipelineStats.data(), sizeof(uint64_t), vk::QueryResultFlagBits::e64);
     }
 
     void setupDescriptorPool() {
@@ -686,7 +645,6 @@ public:
         renderWaitSemaphores = { offscreen.semaphore };
         drawCurrentCommandBuffer();
 
-        // Read query results for displaying in next frame
         getQueryResults();
 
         ExampleBase::submitFrame();
@@ -694,7 +652,6 @@ public:
 
     void prepare() override {
         ExampleBase::prepare();
-        setupQueryPool();
         prepareOffscreen();
         prepareUniformBuffers();
         setupDescriptorSetLayout();
@@ -719,12 +676,6 @@ public:
     }
 
     void OnUpdateUIOverlay() override {
-        if (ui.header("Pipeline statistics")) {
-            for (auto i = 0; i < pipelineStats.size(); ++i) {
-                std::string caption = pipelineStatNames[i] + ": %d";
-                ui.text(caption.c_str(), pipelineStats[i]);
-            }
-        }
         if (ui.header("Settings")) {
             if (ui.checkBox("Display render targets", &debugDisplay)) {
                 buildCommandBuffers();
