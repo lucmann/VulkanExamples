@@ -719,6 +719,12 @@ public:
     }
 
     void OnUpdateUIOverlay() override {
+        if (ui.header("Pipeline statistics")) {
+            for (auto i = 0; i < pipelineStats.size(); ++i) {
+                std::string caption = pipelineStatNames[i] + ": %d";
+                ui.text(caption.c_str(), pipelineStats[i]);
+            }
+        }
         if (ui.header("Settings")) {
             if (ui.checkBox("Display render targets", &debugDisplay)) {
                 buildCommandBuffers();
@@ -731,12 +737,6 @@ public:
                 if (ui.checkBox("Sample rate shading", &useSampleShading)) {
                     buildDeferredCommandBuffer();
                 }
-            }
-        }
-        if (ui.header("Pipeline statistics")) {
-            for (auto i = 0; i < pipelineStats.size(); ++i) {
-                std::string caption = pipelineStatNames[i] + ": %d";
-                ui.text(caption.c_str(), pipelineStats[i]);
             }
         }
     }
