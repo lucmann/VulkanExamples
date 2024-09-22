@@ -337,6 +337,7 @@ void ExampleBase::buildCommandBuffers() {
         cmdBuffer.beginRenderPass(renderPassBeginInfo, vk::SubpassContents::eInline);
         cmdBuffer.beginQuery(queryPool, 0, vk::QueryControlFlagBits::ePrecise);
         updateDrawCommandBuffer(cmdBuffer);
+        std::cout << "swapChain.image[" << i << "]" << " updateDrawCommandBuffer\n";
         cmdBuffer.endQuery(queryPool, 0);
         cmdBuffer.endRenderPass();
         updateCommandBufferPostDraw(cmdBuffer);

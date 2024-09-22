@@ -181,12 +181,14 @@ void VulkanGear::generate(const vks::Context& context,
     uniformData = context.createUniformBuffer(ubo);
 }
 
+#include <iostream>
 void VulkanGear::draw(vk::CommandBuffer cmdbuffer, vk::PipelineLayout pipelineLayout) {
     vk::DeviceSize offsets = 0;
     cmdbuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipelineLayout, 0, descriptorSet, nullptr);
     cmdbuffer.bindVertexBuffers(0, meshInfo.vertices.buffer, offsets);
     cmdbuffer.bindIndexBuffer(meshInfo.indices.buffer, 0, vk::IndexType::eUint32);
-    cmdbuffer.drawIndexed(meshInfo.indexCount, 1, 0, 0, 1);
+    cmdbuffer.drawIndexed(meshInfo.indexCount, 1, 0, 0, 0);
+    std::cout << "indexCount: " << meshInfo.indexCount << "\n";
 }
 
 void VulkanGear::updateUniformBuffer(const glm::mat4& perspective, const glm::mat4& view, float timer) {
