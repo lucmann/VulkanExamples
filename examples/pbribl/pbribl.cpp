@@ -209,7 +209,7 @@ public:
     }
 
     void loadAssets() override {
-        textures.environmentCube.loadFromFile(context, getAssetPath() + "textures/hdr/pisa_cube.ktx", vF::eR16G16B16A16Sfloat);
+        textures.environmentCube.loadFromFile(context, getAssetPath() + "textures/pisa_cube.ktx", vF::eR16G16B16A16Sfloat);
         // Skybox
         models.skybox.loadFromFile(context, getAssetPath() + "models/cube.obj", vertexLayout, 1.0f);
         // Objects
