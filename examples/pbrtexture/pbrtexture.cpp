@@ -145,10 +145,10 @@ public:
     }
 
     void loadAssets() override {
-        textures.environmentCube.loadFromFile(context, getAssetPath() + "textures/hdr/gcanyon_cube.ktx", vF::eR16G16B16A16Sfloat);
+        textures.environmentCube.loadFromFile(context, getAssetPath() + "textures/gcanyon_cube.ktx", vF::eR16G16B16A16Sfloat);
         models.skybox.loadFromFile(context, getAssetPath() + "models/cube.obj", vertexLayout, 1.0f);
         // PBR model
-        models.object.loadFromFile(context, getAssetPath() + "models/cerberus/cerberus.fbx", vertexLayout, 0.05f);
+        models.object.loadFromFile(context, getAssetPath() + "models/cerberus/cerberus.gltf", vertexLayout, 0.05f);
         textures.albedoMap.loadFromFile(context, getAssetPath() + "models/cerberus/albedo.ktx", vF::eR8G8B8A8Unorm);
         textures.normalMap.loadFromFile(context, getAssetPath() + "models/cerberus/normal.ktx", vF::eR8G8B8A8Unorm);
         textures.aoMap.loadFromFile(context, getAssetPath() + "models/cerberus/ao.ktx", vF::eR8Unorm);
