@@ -7,6 +7,13 @@
 */
 #include <vulkanExampleBase.h>
 
+struct SkyboxTexture {
+    SkyboxTexture(std::string n, vk::Format f) :
+        filename(n), format(f) {};
+    std::string filename;
+    vk::Format format;
+};
+
 // Vertex layout for this example
 vks::model::VertexLayout vertexLayout{ {
     vks::model::Component::VERTEX_COMPONENT_POSITION,
@@ -14,9 +21,11 @@ vks::model::VertexLayout vertexLayout{ {
     vks::model::Component::VERTEX_COMPONENT_UV,
 } };
 
+
 class VulkanExample : public vkx::ExampleBase {
 public:
     vks::texture::TextureCubeMap cubeMap;
+    std::vector<SkyboxTexture> skyboxTex;
 
     struct {
         vks::model::Model skybox, object;
@@ -44,6 +53,9 @@ public:
 
     vk::PipelineLayout pipelineLayout;
     vk::DescriptorSetLayout descriptorSetLayout;
+
+    std::vector<std::string> skyboxTexNames;
+    int32_t skyboxTexIndex = 0;
 
     VulkanExample() {
         camera.dolly(-4.0f);
@@ -178,33 +190,31 @@ public:
         uniformData.objectVS.copy(uboVS);
     }
 
-    void loadTextures() {
-        vk::Format format;
-        std::string filename;
+    void prepareSkyboxTextures() {
         const auto& deviceFeatures = context.deviceFeatures;
-        if (deviceFeatures.textureCompressionBC) {
-            filename = "cubemap_yokohama_bc3_unorm.ktx";
-            format = vk::Format::eBc3UnormBlock;
-        } else if (deviceFeatures.textureCompressionASTC_LDR) {
-            filename = "cubemap_yokohama_astc_8x8_unorm.ktx";
-            format = vk::Format::eAstc8x8UnormBlock;
-        } else if (deviceFeatures.textureCompressionETC2) {
-            filename = "cubemap_yokohama_etc2_unorm.ktx";
-            format = vk::Format::eEtc2R8G8B8UnormBlock;
-        } else {
-            throw std::runtime_error("Device does not support any compressed texture format!");
-        }
+        skyboxTex.push_back(SkyboxTexture("cubemap_yokohama_rgba.ktx", vk::Format::eR8G8B8A8Unorm));
+        if (deviceFeatures.textureCompressionBC)
+            skyboxTex.push_back(SkyboxTexture("cubemap_yokohama_bc3_unorm.ktx", vk::Format::eBc3UnormBlock));
+        if (deviceFeatures.textureCompressionASTC_LDR)
+            skyboxTex.push_back(SkyboxTexture("cubemap_yokohama_astc_8x8_unorm.ktx", vk::Format::eAstc8x8UnormBlock));
+        if (deviceFeatures.textureCompressionETC2)
+            skyboxTex.push_back(SkyboxTexture("cubemap_yokohama_etc2_unorm.ktx", vk::Format::eEtc2R8G8B8UnormBlock));
 
-        filename = "cubemap_yokohama_rgba.ktx";
-        format = vk::Format::eR8G8B8A8Unorm;
-        cubeMap.loadFromFile(context, getAssetPath() + "textures/" + filename, format);
-        std::cout << filename << "\n";
+        for (auto texture : skyboxTex)
+            skyboxTexNames.push_back(texture.filename);
+    }
+
+    void loadTextures() {
+        SkyboxTexture st = skyboxTex[skyboxTexIndex];
+        cubeMap.loadFromFile(context, getAssetPath() + "textures/" + st.filename, st.format);
+        std::cout << st.filename << "\n";
     }
 
     void prepare() {
         ExampleBase::prepare();
         loadMeshes();
         prepareUniformBuffers();
+        prepareSkyboxTextures();
         loadTextures();
         setupDescriptorSetLayout();
         preparePipelines();
@@ -222,6 +232,18 @@ public:
     }
 
     virtual void viewChanged() { updateUniformBuffers(); }
+
+    virtual void OnUpdateUIOverlay() override {
+        if (ui.header("Settings")) {
+            if (ui.comboBox("Skybox Texture Formats", &skyboxTexIndex, skyboxTexNames)) {
+                std::cout << "skyboxTexIndex: " << skyboxTexIndex << "\n";
+                loadTextures();
+                // must device.updateDescriptorSets() which will update the newly-loaded texture
+                setupDescriptorSets();
+                buildCommandBuffers();
+            }
+        }
+    }
 };
 
 RUN_EXAMPLE(VulkanExample)
