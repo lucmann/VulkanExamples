@@ -195,7 +195,10 @@ public:
             throw std::runtime_error("Device does not support any compressed texture format!");
         }
 
+        filename = "cubemap_yokohama_rgba.ktx";
+        format = vk::Format::eR8G8B8A8Unorm;
         cubeMap.loadFromFile(context, getAssetPath() + "textures/" + filename, format);
+        std::cout << filename << "\n";
     }
 
     void prepare() {
